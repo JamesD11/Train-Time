@@ -1,0 +1,35 @@
+body{
+	background-image: url(http://www.wcvb.com/image/view/-/23447996/medRes/1/-/maxh/480/maxw/640/-/14lcc2m/-/Amtrak.jpg) ;
+}
+
+.jumbotron{
+	margin-left: 9%;
+	margin-right: 9%;
+	text-align: center;
+	background-color: white;
+	color: royalblue;
+}
+
+#panel1{
+	margin-left: 9%;
+	margin-right: 9%;
+}
+
+#heading1{
+	background-color: royalblue;
+	color: white;
+}
+
+#panel2{
+	margin-left: 10%;
+	margin-right: 10%;
+}
+
+#heading2{
+	background-color: royalblue;
+	color: white;
+}
+
+#addTrain{
+	background-color: #FFD700;
+}
