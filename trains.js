@@ -18,11 +18,32 @@ console.log(now);
 //intial load from Firebase
 dataRef.on("child_added", function(snapshot){
 	console.log(snapshot.val().trainName);
+
+	//math here
+	var firstTime= moment(snapshot.val().time,"hh:mm").subtract(1, "years");
+		console.log(firstTime);
+
+	var currentTime = moment();
+		console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
+
+	var diffTime = moment().diff(moment(firstTime), "minutes");
+		console.log("DIFFERENCE IN TIME: " + diffTime);
+
+	var tRemainder = diffTime % snapshot.val().frequency; 
+		console.log(tRemainder);
+
+	var minRemaining = snapshot.val().frequency - tRemainder;
+		console.log("MINUTES TILL TRAIN: " + minRemaining);
+
+	var nextTrain = moment().add(minRemaining, "minutes").format("hh:mm a");
+	console.log(nextTrain);
+
+
 	$("#trainTable > tbody").append("<tr><td>" + snapshot.val().trainName + 
 	"</td><td>" + snapshot.val().destination + 
 	"</td><td>" + snapshot.val().frequency + 
-	"</td><td>" + snapshot.val().nextTrain + 
-	"</td><td>" + snapshot.val().minRemaining + 
+	"</td><td>" + nextTrain + 
+	"</td><td>" + minRemaining + 
 	"</td></tr>");
 
 
@@ -39,24 +60,6 @@ $("#addTrain").on("click",function(){
 	frequency=$("#frequency").val().trim();
 	time=$("#first-time").val().trim();
 
-	//math here
-	var firstTime= moment(time,"hh:mm").subtract(1, "years");
-		console.log(firstTime);
-
-	var currentTime = moment();
-		console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
-
-	var diffTime = moment().diff(moment(firstTime), "minutes");
-		console.log("DIFFERENCE IN TIME: " + diffTime);
-
-	var tRemainder = diffTime % frequency; 
-		console.log(tRemainder);
-
-	var minRemaining = frequency - tRemainder;
-		console.log("MINUTES TILL TRAIN: " + minRemaining);
-
-	var nextTrain = moment().add(minRemaining, "minutes").format("hh:mm a");
-	console.log(nextTrain);
 
 	// nextTrain=(minRemaining + now);
 	// console.log(nextTrain);
@@ -74,9 +77,7 @@ $("#addTrain").on("click",function(){
 		trainName: trainName,
 		destination: destination,
 		time: time,
-		frequency: frequency,
-		nextTrain: nextTrain,
-		minRemaining: minRemaining,
+		frequency: frequency
 		});
 
 	//clear forms
