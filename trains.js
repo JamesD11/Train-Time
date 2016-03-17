@@ -4,30 +4,32 @@ console.log("test");
 //Global variables
 //------------------------------------------------
 var dataRef = new Firebase("https://train-homework-app.firebaseio.com/");
-
 var trainName="";
 var destination="";
 var time=0;
 var frequency=0;
 var nextTrain=0;
 var minRemaining=0;
-var now=moment().format("HH:mm");
+var now=moment().format("h:mma");
 console.log(now);
 
+
+
 //intial load from Firebase
-dataRef.on("value", function(snapshot){
-	console.log(snapshot.val());
-	console.log(snapshot.val());
-	//$("#table-body").html(snapshot.val().trainName);
-	//$("#table-body").html(snapshot.val().destination);
-	//$("#table-body").html(snapshot.val().time);
+dataRef.on("child_added", function(snapshot){
+	console.log(snapshot.val().trainName);
+	$("#trainTable > tbody").append("<tr><td>" + snapshot.val().trainName + 
+	"</td><td>" + snapshot.val().destination + 
+	"</td><td>" + snapshot.val().frequency + 
+	"</td><td>" + snapshot.val().nextTrain + 
+	"</td><td>" + snapshot.val().minRemaining + 
+	"</td></tr>");
+
 
 },function(errorObject){
 
 		console.log("Errors handled: " + errorObject.code)
-	});
-
-
+});
 
 //click event for submit button to add train
 
@@ -37,33 +39,47 @@ $("#addTrain").on("click",function(){
 	frequency=$("#frequency").val().trim();
 	time=$("#first-time").val().trim();
 
+	//math here
+	var firstTime= moment(time,"hh:mm").subtract(1, "years");
+		console.log(firstTime);
 
-	console.log(trainName);
-	console.log(destination);
-	console.log(time);
-	console.log(frequency);
+	var currentTime = moment();
+		console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
 
-	//nextTrain=moment().add('mm', ).fromNow();
+	var diffTime = moment().diff(moment(firstTime), "minutes");
+		console.log("DIFFERENCE IN TIME: " + diffTime);
+
+	var tRemainder = diffTime % frequency; 
+		console.log(tRemainder);
+
+	var minRemaining = frequency - tRemainder;
+		console.log("MINUTES TILL TRAIN: " + minRemaining);
+
+	var nextTrain = moment().add(minRemaining, "minutes").format("hh:mm a");
+	console.log(nextTrain);
+
+	// nextTrain=(minRemaining + now);
+	// console.log(nextTrain);
+
+
+
+	
+	//frequency=val().moment().unix();
+	//time=val.moment().unix();
+	//console.log(frequency);
+	//console.log(time);
 
 	//push to firebase
-	/*dataRef.push({
+	dataRef.push({
 		trainName: trainName,
 		destination: destination,
 		time: time,
 		frequency: frequency,
 		nextTrain: nextTrain,
-		});*/
-		
+		minRemaining: minRemaining,
+		});
 
-	//append new train to old list
-	$("#trainTable > tbody").append("<tr><td>" + trainName + 
-	"</td><td>" + destination + 
-	"</td><td>" + frequency + 
-	"</td><td>" + nextTrain + 
-	"</td><td>" + minRemaining + 
-	"</td></tr>");
-
-	
+	//clear forms
 	$("#train-name").val("");
 	$("#destination").val("");
 	$("#frequency").val("");
